@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>admin</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -115,5 +116,38 @@
         <version>4.12</version>
     </dependency>
     </dependencies>
+
+
+    <!-- 项目打包时会将java目录中的*.xml文件也进行打包 -->
+    <build>
+        <finalName>${project.name}</finalName>
+        <plugins>
+            <plugin>
+                <!--该插件主要用途：构建可执行的JAR -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                  <mainClass>com.example.adminService.AdminApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+       <resources>
+           <resource>
+               <directory>src/main/resources</directory>
+               <includes>
+                   <include>**/*.xml</include>
+                   <include>**/*.properties</include>
+               </includes>
+               <filtering>false</filtering>
+           </resource>
+       </resources>
+    </build>
 
 </project>
