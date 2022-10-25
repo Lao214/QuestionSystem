@@ -120,7 +120,7 @@
 
     <!-- 项目打包时会将java目录中的*.xml文件也进行打包 -->
     <build>
-        <finalName>${project.name}</finalName>
+        <finalName>admin</finalName>
         <plugins>
             <plugin>
                 <!--该插件主要用途：构建可执行的JAR -->
