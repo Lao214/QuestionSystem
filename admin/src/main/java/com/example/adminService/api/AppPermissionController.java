@@ -5,8 +5,10 @@ import com.example.adminService.service.PermissionService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import utils.QrCodeUtils;
 import utils.Result;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

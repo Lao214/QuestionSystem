@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtUtils {
 
     public static final long EXPIRE = 1000 * 60 * 60 * 24;  //设置token的过期时间
-    public static final String APP_SECRET = "ukc8BDbRigUDaY6pZFfWus2jZWLPHO";  //根据该密钥进行加密和编码
+    public static final String APP_SECRET = "echoes";  //根据该密钥进行加密和编码
 
     //生成token字符串的方法
     //传入用户id和nickname

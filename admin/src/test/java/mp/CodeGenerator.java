@@ -1,6 +1,7 @@
 package mp;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -8,8 +9,14 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.example.adminService.entity.User;
+import com.example.adminService.service.UserService;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +27,12 @@ import java.util.Date;
  * @since 2018/12/13
  */
 public class CodeGenerator {
+
+
+    @Autowired
+    public   UserService userService;
+
+
 
     @Test
     public void testDateCompare() throws ParseException {
@@ -78,13 +91,13 @@ public class CodeGenerator {
         pc.setController("controller");
         pc.setEntity("entity");
         pc.setService("service");
-        pc.setMapper("dao");
+        pc.setMapper("mapper");
         mpg.setPackageInfo(pc);
 
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
         /**表的名称**/
-        strategy.setInclude("acl_permission","acl_role","acl_role_permission","acl_user","acl_user_role");
+        strategy.setInclude("form_item");
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
 

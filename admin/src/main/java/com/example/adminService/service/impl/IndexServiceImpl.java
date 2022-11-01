@@ -9,6 +9,7 @@ import com.example.adminService.service.PermissionService;
 import com.example.adminService.service.RoleService;
 import com.example.adminService.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class IndexServiceImpl implements IndexService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private static MongoTemplate mongoTemplate;
 
     /**
      * 根据用户名获取用户登录信息
