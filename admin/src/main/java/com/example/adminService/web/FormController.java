@@ -69,8 +69,8 @@ public class FormController {
         /**构建条件**/
         QueryWrapper<Form> queryWrapper =new QueryWrapper<>();
         String  name = formQuery.getName();
-        Integer status=formQuery.getStatus();
-        Integer type =formQuery.getType();
+        Integer status = formQuery.getStatus();
+        Integer type = formQuery.getType();
         /**判断是否为空，如果为空，不拼接条件**/
         if(!StringUtils.isEmpty(name)){
             //构建条件
@@ -121,11 +121,15 @@ public class FormController {
         Form form = new Form();
         form.setName(formvo.getTitle());
         form.setUserId(one.getId());
+        if(!StringUtils.isEmpty(formvo.getDescription())){
+            form.setDescription(formvo.getDescription());
+        }
         form.setCreateTime(new Date());
         form.setUpdateTime(new Date());
         boolean save =  formService.save(form);
         if(save){
             FormItem formItem =new FormItem();
+            formItem.setName(formvo.getTitle());
             formItem.setFormId(form.getId());
             formItem.setItem(formvo.getValues());
             boolean saveOK = formItemService.save(formItem);
@@ -152,9 +156,13 @@ public class FormController {
             Form form =new Form();
             form.setId(formvo.getId());
             form.setName(formvo.getTitle());
+            if(!StringUtils.isEmpty(formvo.getDescription())){
+                form.setDescription(formvo.getDescription());
+            }
             boolean save = formService.updateById(form);
             if(save){
                 FormItem formItem = new FormItem();
+                formItem.setName(formvo.getTitle());
                 formItem.setItem(formvo.getValues());
                 formItem.setFormId(formvo.getId());
                 boolean saveOK = formItemService.updateByFormId(formItem);

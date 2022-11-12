@@ -15,6 +15,9 @@ public class FormQuery {
     @ApiModelProperty(value = "问卷名称，模糊查询")
     private String name;
 
+    @ApiModelProperty(value = "问卷Key")
+    private String id;
+
     @ApiModelProperty(value = "状态 1已发布 0未发布")
     private Integer status;
 

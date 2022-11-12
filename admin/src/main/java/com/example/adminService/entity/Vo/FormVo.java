@@ -16,6 +16,10 @@ public class FormVo {
 
     private String title;
 
+    private String description;
+
     private String values;
+
+    private String data;
 
 }

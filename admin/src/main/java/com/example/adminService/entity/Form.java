@@ -61,5 +61,6 @@ public class Form implements Serializable {
     @ApiModelProperty(value = "反馈移动界面")
     private Integer evaluatePhone;
 
-
+    @ApiModelProperty(value = "描述")
+    private String description;
 }
