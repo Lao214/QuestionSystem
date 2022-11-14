@@ -22,4 +22,11 @@ public class FormVo {
 
     private String data;
 
+    private String scoreJSON;
+
+    /**
+     * 逻辑公式
+     */
+    private String formula;
+
 }

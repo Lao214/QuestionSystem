@@ -1,6 +1,8 @@
 package com.example.adminService.web;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.adminService.entity.Form;
 import com.example.adminService.entity.FormItem;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
+import utils.Calculator;
 import utils.Result;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,14 +48,41 @@ public class formDataController {
 
     @PostMapping("postFormData")
     @ApiOperation(value = "提交数据")
-    public Result addForm(@RequestBody FormVo formvo, HttpServletRequest request){
+    public Result postFormData(@RequestBody FormVo formvo, HttpServletRequest request){
         Form form = formService.getById(formvo.getId());
+        formvo.setData(formvo.getData().replaceAll("\\.","_"));
         if(form.getStatus()==0){
             return Result.error().msg("表单状态异常");
         }
         if(form.getStatus()==1){
-             mongoTemplate.save(formvo.getData(), formvo.getTitle() + formvo.getId());
-             return Result.success();
+            Map<String,String> dataMap = JSONObject.parseObject(formvo.getData(), Map.class);
+             if(form.getType()==1){
+                 String formula = form.getEvaluateLogic();
+                 formula = formula.replaceAll("x","*");
+                 formula = formula.replaceAll("÷","/");
+                 //type =1 表示有反馈的问卷
+                 Map<Object,Object> map = JSONObject.parseObject(formvo.getScoreJSON(), Map.class);
+                 for (Map.Entry<Object,Object> entry:map.entrySet()){
+                     formula =formula.replaceAll(entry.getKey().toString(),entry.getValue().toString());
+                 }
+                 String[] splitFormula = formula.split(",");
+                 Calculator calculator = new Calculator();
+                 for(int i=0;i < splitFormula.length;i++){
+                     int index = splitFormula[i].indexOf("=");
+                     splitFormula[i] = splitFormula[i].substring(0,index);
+                     double result = calculator.executeExpression(splitFormula[i]);
+                     dataMap.put("result"+(i+1),result+"");
+                     for (int j=0;j<splitFormula.length;j++){
+                         splitFormula[j] = splitFormula[j].replaceAll("result"+(i+1),result+"");
+                     }
+                 }
+                 String dataToJSONString = JSONObject.toJSONString(dataMap);
+                 mongoTemplate.save(dataToJSONString, formvo.getTitle() + formvo.getId());
+                 return Result.success();
+             }else {
+                 mongoTemplate.save(formvo.getData(), formvo.getTitle() + formvo.getId());
+                 return Result.success();
+             }
         }
         return null;
     }

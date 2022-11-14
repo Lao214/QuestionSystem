@@ -4,6 +4,7 @@ package com.example.adminService.web;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.adminService.entity.Form;
 import com.example.adminService.entity.FormItem;
+import com.example.adminService.entity.Vo.FormVo;
 import com.example.adminService.service.FormItemService;
 import com.example.adminService.service.FormService;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import utils.Result;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -48,6 +51,27 @@ public class FormItemController {
         }else {
             return Result.error();
         }
+    }
+
+    @PostMapping("updateFormItem")
+    @ApiOperation(value = "更新表单项")
+    public Result updateFormItem(@RequestBody FormVo formvo){
+        Form form =new Form();
+        form.setId(formvo.getId());
+        form.setEvaluateLogic(formvo.getFormula());
+        form.setType(1);
+        form.setUpdateTime(new Date());
+        boolean update = formService.updateById(form);
+        if(update){
+            FormItem formItem =new FormItem();
+            formItem.setFormId(formvo.getId());
+            formItem.setItem(formvo.getValues());
+            boolean updateOK = formItemService.updateByFormId(formItem);
+            if(updateOK){
+                return  Result.success();
+            }
+        }
+        return Result.error();
     }
 
 
