@@ -29,4 +29,8 @@ public class FormVo {
      */
     private String formula;
 
+    /**
+     * UI类型
+     */
+    private String UiType;
 }

@@ -78,10 +78,10 @@ public class formDataController {
                  }
                  String dataToJSONString = JSONObject.toJSONString(dataMap);
                  mongoTemplate.save(dataToJSONString, formvo.getTitle() + formvo.getId());
-                 return Result.success();
+                 return Result.success().data("dataMap",dataMap).data("evaluateUrlPhone",form.getEvaluatePhone()).data("evaluateUrlWeb",form.getEvaluateWeb());
              }else {
                  mongoTemplate.save(formvo.getData(), formvo.getTitle() + formvo.getId());
-                 return Result.success();
+                 return Result.success().data("evaluateUrlPhone",form.getEvaluatePhone()).data("evaluateUrlWeb",form.getEvaluateWeb());
              }
         }
         return null;
@@ -92,15 +92,18 @@ public class formDataController {
         QueryWrapper<FormItem> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("form_id",formQuery.getId());
         FormItem one = formItemService.getOne(queryWrapper);
+        one.setItem(one.getItem().replaceAll("\\.","_"));
         List<ItemVo> itemVos = JSONArray.parseArray(one.getItem(), ItemVo.class);
         Query query = new Query();
-        for(ItemVo iv : itemVos){
+        for(ItemVo iv : itemVos) {
             if(iv.getComponent().equals("radioGroup") || iv.getComponent().equals("slider")){
                 query.fields().include(iv.getModelValue());
             }
         }
         long total = mongoTemplate.count(query, one.getName() + formQuery.getId());
         query.fields().exclude("_id");
+        query.fields().include("createTime");
+        query.fields().include("result4");
         query.limit(limit);
         query.skip((current-1)*10);
         List<Map> strings = mongoTemplate.find(query, Map.class, one.getName() + formQuery.getId());
