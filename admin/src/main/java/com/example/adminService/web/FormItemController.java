@@ -73,6 +73,10 @@ public class FormItemController {
         form.setUpdateTime(new Date());
         boolean update = formService.updateById(form);
         if(update){
+            Object o = redisTemplate.opsForValue().get(formvo.getId() + "item");
+            if(o != null) {
+                redisTemplate.delete(formvo.getId()+"item");
+            }
             FormItem formItem =new FormItem();
             formItem.setFormId(formvo.getId());
             formItem.setItem(formvo.getValues());
