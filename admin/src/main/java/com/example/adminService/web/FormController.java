@@ -1,8 +1,12 @@
 package com.example.adminService.web;
 
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.adminService.utils.AddressUtils;
+import com.example.adminService.utils.RedisCache;
 import com.example.adminService.entity.Form;
 import com.example.adminService.entity.FormItem;
 import com.example.adminService.entity.QueryVo.FormQuery;
@@ -14,17 +18,16 @@ import com.example.adminService.service.FormService;
 import com.example.adminService.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import utils.JwtUtils;
-import utils.QrCodeUtils;
-import utils.Result;
+import utils.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -49,6 +52,12 @@ public class FormController {
 
     @Autowired
     private TokenManager tokenManager;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisCache redisCache;
 
 
 
@@ -151,7 +160,7 @@ public class FormController {
      * @date: 2022/9/27 1:31 PM
      */
     @PostMapping("update")
-    @ApiOperation(value = "添加表单")
+    @ApiOperation(value = "修改表单")
     public Result update(@RequestBody FormVo formvo, HttpServletRequest request){
             Form form =new Form();
             form.setId(formvo.getId());
@@ -167,6 +176,10 @@ public class FormController {
                 formItem.setFormId(formvo.getId());
                 boolean saveOK = formItemService.updateByFormId(formItem);
                 if(saveOK){
+                    Object o = redisTemplate.opsForValue().get(formvo.getId() + "item");
+                    if(o != null){
+                        redisTemplate.delete(formvo.getId()+"item");
+                    }
                     return Result.success().data("formItem",formItem);
                 }else {
                     return Result.error();
@@ -184,18 +197,13 @@ public class FormController {
      * @date: 2022/9/27 1:31 PM
      */
     @PostMapping("publish/{id}")
-    @ApiOperation(value = "添加表单")
+    @ApiOperation(value = "发布")
     public Result publish(@PathVariable String id, HttpServletResponse response)throws  Exception{
         Form form =new Form();
         form.setId(id);
         form.setStatus(1);
         boolean save = formService.updateById(form);
         if(save){
-//            String address ="http://localhost:9528/#/bulid/?id="+id;
-//            String projectPath = System.getProperty("user.dir");
-//            String logoPath = projectPath+ "/src/resources/static/muye.png";
-//            String destPath = projectPath+ "/src/resources/static/qrcode/"+id+".jpg";
-//            QrCodeUtils.encode(address,logoPath,response.getOutputStream(),true);
             return Result.success().data("status",form.getStatus());
         }else {
             return Result.error();
@@ -214,12 +222,63 @@ public class FormController {
     }
 
     @GetMapping("/getByFormId/{id}")
-    @ApiOperation(value = "获取二维码")
     public Result getByFormId(@PathVariable String id) throws Exception {
         QueryWrapper<Form> queryWrapper =new QueryWrapper<>();
         queryWrapper.eq("id",id);
         Form one = formService.getOne(queryWrapper);
         return Result.success().data("form",one);
+    }
+
+
+    @PostMapping("viewCount")
+    public Result viewCount(HttpServletRequest request,@RequestBody FormVo formvo){
+        String submitID = "";
+        String ipAddr = HttpUtils.getIpAddr(request);
+        String submitAddress =  AddressUtils.getRealAddressByIP(ipAddr);
+        /**判断有无工号**/
+        if(StringUtils.isEmpty(formvo.getJobNo())){
+            /**首先检测该访问者今天有没有访问过**/
+            Object visitorCache = redisCache.getCacheObject(formvo.getUa()+ipAddr+formvo.getId());
+            String dateStr = DateUtil.formatDate(new Date()).replaceAll("-","");
+            String visitorStr = RandomUtil.randomNumbers(7);
+            if(visitorCache ==null){
+                /**如果没有就缓存，然后检测该问卷有没有人访问过**/
+                redisCache.setCacheObject(formvo.getUa()+ipAddr+formvo.getId(),visitorStr+dateStr,3, TimeUnit.DAYS);
+                Integer viewCache = redisCache.getCacheObject(formvo.getId());
+                if(viewCache == null){
+                    redisCache.setCacheObject(formvo.getId(),1);
+//                    /**数据库插入一条数据**/
+//                    ViewCountEntity viewCountEntity =new ViewCountEntity();
+//                    viewCountEntity.setCount(1l);
+//                    viewCountEntity.setFormKey(formKey);
+//                    viewCountService.save(viewCountEntity);
+                    return Result.success().data("submitID",visitorStr+dateStr).data("submitAddress",submitAddress);
+                }else {
+                    redisCache.setCacheObject(formvo.getId(),viewCache+1);
+                    return Result.success().data("submitID",visitorStr+dateStr).data("submitAddress",submitAddress);
+                }
+            }else {
+                return Result.success().data("submitID",visitorCache).data("submitAddress",submitAddress);
+            }
+        }
+        else {
+            /**首先检测该员工今天有没有访问过**/
+            String visitorCache = redisCache.getCacheObject(formvo.getJobNo() + "-" + formvo.getId());
+            if (visitorCache == null) {
+                String dateStr = DateUtil.formatDate(new Date()).replaceAll("-", "");
+                redisCache.setCacheObject(formvo.getJobNo() + "-" + formvo.getId(), formvo.getJobNo() + dateStr, 3, TimeUnit.DAYS);
+                Integer viewCache = redisCache.getCacheObject(formvo.getId());
+                if (viewCache == null) {
+                    redisCache.setCacheObject(formvo.getId(), 1);
+                    return Result.success().data("submitID", formvo.getJobNo() + dateStr).data("submitAddress", submitAddress);
+                } else {
+                    redisCache.setCacheObject(formvo.getId(), viewCache + 1);
+                    return Result.success().data("submitID", formvo.getJobNo() + dateStr).data("submitAddress", submitAddress);
+                }
+            } else {
+                return Result.success().data("submitID", visitorCache).data("submitAddress", submitAddress);
+            }
+        }
     }
 
 }

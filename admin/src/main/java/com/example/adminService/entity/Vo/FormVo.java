@@ -32,5 +32,15 @@ public class FormVo {
     /**
      * UI类型
      */
-    private String UiType;
+    private Long uiKey;
+
+    /**
+     * 工号
+     */
+    private String jobNo;
+
+    /**
+     * 设备信息
+     */
+    private String ua;
 }

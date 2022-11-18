@@ -9,6 +9,7 @@ import com.example.adminService.service.FormItemService;
 import com.example.adminService.service.FormService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import utils.Result;
@@ -33,6 +34,9 @@ public class FormItemController {
     @Autowired
     private FormItemService formItemService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * @description: 查询表单项
      * @param:
@@ -43,13 +47,19 @@ public class FormItemController {
     @GetMapping("getFormItemByFormId/{id}")
     @ApiOperation(value = "查询表单项")
     public Result getFormItemByFormId(@PathVariable String id){
-        QueryWrapper<FormItem> formItemQueryWrapper=new QueryWrapper<>();
-        formItemQueryWrapper.eq("form_id",id);
-        FormItem one = formItemService.getOne(formItemQueryWrapper);
-        if(one!=null){
-            return Result.success().data("formItem",one);
+        Object formItem = redisTemplate.opsForValue().get(id + "item");
+        if(formItem == null) {
+            QueryWrapper<FormItem> formItemQueryWrapper=new QueryWrapper<>();
+            formItemQueryWrapper.eq("form_id",id);
+            FormItem one = formItemService.getOne(formItemQueryWrapper);
+            if(one!=null){
+                redisTemplate.opsForValue().set(id+"item",one);
+                return Result.success().data("formItem",one);
+            }else {
+                return Result.error();
+            }
         }else {
-            return Result.error();
+            return Result.success().data("formItem",formItem);
         }
     }
 

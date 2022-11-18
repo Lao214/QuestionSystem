@@ -44,10 +44,10 @@ public class EvaluateUi implements Serializable {
     private Integer isPublish;
 
     @ApiModelProperty(value = "点赞数")
-    private Long like;
+    private Long likes;
 
     @ApiModelProperty(value = "收藏数")
-    private Long collection;
+    private Long collections;
 
     @ApiModelProperty(value = "类型")
     private String type;

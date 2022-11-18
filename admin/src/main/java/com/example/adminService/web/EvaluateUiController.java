@@ -10,6 +10,7 @@ import com.example.adminService.security.TokenManager;
 import com.example.adminService.service.EvaluateUiService;
 import com.example.adminService.service.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import utils.Result;
@@ -35,48 +36,55 @@ public class EvaluateUiController {
     @Autowired
     FormService formService;
 
-    @PostMapping("saveUIJSON")
-    public Result saveUIJSON(@RequestBody FormVo formvo, HttpServletRequest request){
+    @PostMapping("saveUIJSONPC")
+    public Result saveUIJSONPC(@RequestBody FormVo formvo, HttpServletRequest request){
         EvaluateUi evaluateUi =new EvaluateUi();
-        evaluateUi.setCollection(0l);
-        evaluateUi.setCreateTime(new Date());
-        evaluateUi.setUpdateTime(new Date());
-        evaluateUi.setLike(0l);
-        evaluateUi.setType(formvo.getUiType());
-        evaluateUi.setComponents(formvo.getData());
-        String jwtToken = request.getHeader("token");
-        String username = tokenManager.getUserFromToken(jwtToken);
-        evaluateUi.setUser(username);
-        evaluateUi.setIsPublish(0);
-        boolean save = evaluateUiService.save(evaluateUi);
-        if(save){
-            Form form =new Form();
-            form.setId(formvo.getId());
-            if(evaluateUi.getType().equals("PC")){
+        if (formvo.getUiKey() < 1) {
+            /**如果没有 uiKey 说明还没创建，创建UI模板。**/
+            evaluateUi.setCollections(0l);
+            evaluateUi.setLikes(0l);
+            evaluateUi.setCreateTime(new Date());
+            evaluateUi.setUpdateTime(new Date());
+            evaluateUi.setType("PC");
+            evaluateUi.setComponents(formvo.getData());
+            String jwtToken = request.getHeader("token");
+            String username = tokenManager.getUserFromToken(jwtToken);
+            evaluateUi.setUser(username);
+            evaluateUi.setIsPublish(0);
+            boolean save = evaluateUiService.save(evaluateUi);
+            if(save){
+                Form form =new Form();
+                form.setId(formvo.getId());
                 form.setEvaluateWeb(evaluateUi.getId().intValue());
-            } else if(evaluateUi.getType().equals("Phone")){
-                form.setEvaluatePhone(evaluateUi.getId().intValue());
+                boolean update = formService.updateById(form);
+                if(update) {
+                    return Result.success().data("uiKey", evaluateUi.getId()).msg("添加成功");
+                }
             }
-            formService.updateById(form);
+            return Result.error();
         }
-        return Result.success();
+        else {
+            evaluateUi.setUpdateTime(new Date());
+            evaluateUi.setComponents(formvo.getData());
+            evaluateUi.setId(formvo.getUiKey());
+            boolean update = evaluateUiService.updateById(evaluateUi);
+            if(update) {
+                return Result.success().data("uiKey", evaluateUi.getId()).msg("修改成功");
+            } else {
+                return Result.error();
+            }
+        }
     }
 
-    @PostMapping("updateUIJSON")
-    public Result updateUIJSON(@RequestBody FormVo formvo, HttpServletRequest request){
-        EvaluateUi evaluateUi =new EvaluateUi();
-        evaluateUi.setUpdateTime(new Date());
-        evaluateUi.setComponents(formvo.getData());
+    @GetMapping("getUiKeyPC/{formId}")
+    public Result getUiKeyPC(@PathVariable String formId, HttpServletRequest request){
         QueryWrapper<Form> queryWrapper =new QueryWrapper<>();
-        queryWrapper.eq("id",formvo.getId());
+        queryWrapper.eq("id",formId);
         Form form = formService.getOne(queryWrapper);
-        if(formvo.getUiType().equals("PC")){
-            evaluateUi.setId(form.getEvaluateWeb().longValue());
-        } else if(formvo.getUiType().equals("Phone")) {
-            evaluateUi.setId(form.getEvaluatePhone().longValue());
-        }
-        boolean save = evaluateUiService.updateById(evaluateUi);
-        return Result.success();
+        QueryWrapper<EvaluateUi> queryWrapperUI =new QueryWrapper<>();
+        queryWrapperUI.eq("id",form.getEvaluateWeb());
+        EvaluateUi evaluateUi = evaluateUiService.getOne(queryWrapperUI);
+        return Result.success().data("ui",evaluateUi);
     }
 }
 
