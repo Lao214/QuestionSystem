@@ -1,4 +1,4 @@
-package com.example.adminService.controller;
+package com.example.adminService.acl.controller;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;

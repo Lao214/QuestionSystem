@@ -1,4 +1,4 @@
-package com.example.adminService.controller;
+package com.example.adminService.acl.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;

@@ -1,4 +1,4 @@
-package com.example.adminService.security;
+package com.example.adminService.acl.security;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;

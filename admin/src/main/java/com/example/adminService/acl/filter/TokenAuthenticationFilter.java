@@ -1,6 +1,6 @@
-package com.example.adminService.filter;
+package com.example.adminService.acl.filter;
 
-import com.example.adminService.security.TokenManager;
+import com.example.adminService.acl.security.TokenManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

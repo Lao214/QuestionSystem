@@ -1,4 +1,4 @@
-package com.example.adminService.helper;
+package com.example.adminService.acl.helper;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.adminService.entity.Permission;

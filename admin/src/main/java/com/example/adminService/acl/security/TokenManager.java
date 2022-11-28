@@ -1,4 +1,4 @@
-package com.example.adminService.security;
+package com.example.adminService.acl.security;
 
 import io.jsonwebtoken.CompressionCodecs;
 import io.jsonwebtoken.Jwts;

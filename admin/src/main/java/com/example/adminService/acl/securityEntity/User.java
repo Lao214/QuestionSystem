@@ -1,4 +1,4 @@
-package com.example.adminService.securityEntity;
+package com.example.adminService.acl.securityEntity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

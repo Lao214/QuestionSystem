@@ -3,7 +3,7 @@ package com.example.adminService.service.impl;
 
 
 import com.example.adminService.entity.User;
-import com.example.adminService.securityEntity.SecurityUser;
+import com.example.adminService.acl.securityEntity.SecurityUser;
 import com.example.adminService.service.PermissionService;
 import com.example.adminService.service.UserService;
 import org.springframework.beans.BeanUtils;
@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             //throw new UsernameNotFoundException("用户名不存在！");
         }
         // 返回UserDetails实现类
-        com.example.adminService.securityEntity.User curUser = new com.example.adminService.securityEntity.User();
+        com.example.adminService.acl.securityEntity.User curUser = new com.example.adminService.acl.securityEntity.User();
         BeanUtils.copyProperties(user,curUser);
 
         List<String> authorities = permissionService.selectPermissionValueByUserId(user.getId());

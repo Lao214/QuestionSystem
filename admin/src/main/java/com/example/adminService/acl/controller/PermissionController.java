@@ -1,4 +1,4 @@
-package com.example.adminService.controller;
+package com.example.adminService.acl.controller;
 
 import com.example.adminService.entity.Permission;
 import com.example.adminService.service.PermissionService;
