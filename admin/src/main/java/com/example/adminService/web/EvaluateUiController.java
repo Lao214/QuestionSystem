@@ -86,5 +86,12 @@ public class EvaluateUiController {
         EvaluateUi evaluateUi = evaluateUiService.getOne(queryWrapperUI);
         return Result.success().data("ui",evaluateUi);
     }
+
+    @GetMapping("getWebUiByFormId/{formId}")
+    public Result getUiByFormId(@PathVariable String formId, HttpServletRequest request){
+        Form form = formService.getOne(new QueryWrapper<Form>().eq("id",formId));
+        EvaluateUi evaluateUi = evaluateUiService.getOne(new QueryWrapper<EvaluateUi>().eq("id", form.getEvaluateWeb()));
+        return Result.success().data("evaluateUi",evaluateUi);
+    }
 }
 

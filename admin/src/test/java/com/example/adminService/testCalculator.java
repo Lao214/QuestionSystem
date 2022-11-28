@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Anzepeng
+ * @author laowk
  * @title: Calculator
  * @projectName demo
  * @description: TODO
@@ -229,6 +229,6 @@ public class testCalculator {
         System.out.println(isDoubleEquals(372.8, executeExpression("9.2 *(20-1)-1+199")));
         System.out.println(isDoubleEquals(-29, executeExpression("9 *(20-1)-(1+199)")));
         System.out.println(isDoubleEquals(2.0, executeExpression("1+1=")));
-        System.out.println(isDoubleEquals(10.0, executeExpression("(1+1)*(2+3)=")));
+        System.out.println(isDoubleEquals(20.0, executeExpression("((1+1)*2)*(2+3)=")));
     }
 }

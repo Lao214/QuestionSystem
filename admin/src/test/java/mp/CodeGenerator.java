@@ -29,8 +29,6 @@ import java.util.Date;
 public class CodeGenerator {
 
 
-    @Autowired
-    public   UserService userService;
 
 
 

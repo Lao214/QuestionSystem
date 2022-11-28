@@ -30,7 +30,7 @@ public final class MD5 {
     }
 
     public static void main(String[] args) {
-        System.out.println(MD5.encrypt("admin123"));
+        System.out.println(MD5.encrypt("admin@123keb"));
     }
 
 }

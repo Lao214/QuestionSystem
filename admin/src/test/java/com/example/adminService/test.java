@@ -4,12 +4,17 @@ import com.example.adminService.entity.Form;
 import com.example.adminService.entity.FormItem;
 import com.example.adminService.service.FormItemService;
 import com.example.adminService.service.FormService;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author peterlin
@@ -31,17 +36,24 @@ import java.util.Date;
 
     @Test
     void create(){
-        mongoTemplate.save("{\n" +
-                "  \"_id\": {\n" +
-                "    \"$oid\": \"63633606c09ac54077e22716\"\n" +
-                "  },\n" +
-                "  \"第1题 您投资失败遭遇到一个财务困境。这个情况您觉得自己可以影响掌控到什么程度\": \"完全无法控制\",\n" +
-                "  \"第2题 领导忽视您的升职。为了改善这个情况，您觉得自己要负责任到什么程度。\": \"完全不负责\",\n" +
-                "  \"工号\": \"12312\",\n" +
-                "  \"formId\": \"1587962903200284673\",\n" +
-                "  \"createTime\": \"2022-11-03 11:31:18\",\n" +
-                "  \"formName\": \"逆商\"\n" +
-                "}","表单");
+//        mongoTemplate.save("{\n" +
+//                "  \"_id\": {\n" +
+//                "    \"$oid\": \"63633606c09ac54077e22716\"\n" +
+//                "  },\n" +
+//                "  \"第1题 您投资失败遭遇到一个财务困境。这个情况您觉得自己可以影响掌控到什么程度\": \"完全无法控制\",\n" +
+//                "  \"第2题 领导忽视您的升职。为了改善这个情况，您觉得自己要负责任到什么程度。\": \"完全不负责\",\n" +
+//                "  \"工号\": \"12312\",\n" +
+//                "  \"formId\": \"1587962903200284673\",\n" +
+//                "  \"createTime\": \"2022-11-03 11:31:18\",\n" +
+//                "  \"formName\": \"逆商\"\n" +
+//                "}","表单");
+            List<Map> all = mongoTemplate.findAll(Map.class,"恒毅力1591227933773537281");
+            Query query = new Query();
+            long total = mongoTemplate.count(query, "恒毅力1591227933773537281");
+            List<Map> asd = mongoTemplate.find(query, Map.class, "恒毅力1591227933773537281");
+            System.out.println(all);
+            System.out.println(asd);
+            System.out.println(total);
     }
 
     @Test
