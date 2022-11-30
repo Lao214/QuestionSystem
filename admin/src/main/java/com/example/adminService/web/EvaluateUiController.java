@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.adminService.entity.EvaluateUi;
 import com.example.adminService.entity.Form;
 import com.example.adminService.entity.Vo.FormVo;
-import com.example.adminService.acl.security.TokenManager;
 import com.example.adminService.service.EvaluateUiService;
 import com.example.adminService.service.FormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.adminService.utils.JwtHelper;
 import utils.Result;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ public class EvaluateUiController {
     EvaluateUiService evaluateUiService;
 
     @Autowired
-    TokenManager tokenManager;
+    JwtHelper jwtHelper;
 
     @Autowired
     FormService formService;
@@ -46,7 +46,7 @@ public class EvaluateUiController {
             evaluateUi.setType("PC");
             evaluateUi.setComponents(formvo.getData());
             String jwtToken = request.getHeader("token");
-            String username = tokenManager.getUserFromToken(jwtToken);
+            String username = jwtHelper.getUsernameByToken(jwtToken);
             evaluateUi.setUser(username);
             evaluateUi.setIsPublish(0);
             boolean save = evaluateUiService.save(evaluateUi);

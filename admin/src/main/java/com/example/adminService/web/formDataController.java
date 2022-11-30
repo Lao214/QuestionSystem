@@ -8,7 +8,6 @@ import com.example.adminService.entity.FormItem;
 import com.example.adminService.entity.QueryVo.FormQuery;
 import com.example.adminService.entity.Vo.FormVo;
 import com.example.adminService.entity.Vo.ItemVo;
-import com.example.adminService.acl.security.TokenManager;
 import com.example.adminService.service.FormItemService;
 import com.example.adminService.service.FormService;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 import utils.Calculator;
+import com.example.adminService.utils.JwtHelper;
 import utils.Result;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequestMapping("/webApi/formData")
 public class formDataController {
     @Autowired
-    private TokenManager tokenManager;
+    private JwtHelper jwtHelper;
 
     @Autowired
     private MongoTemplate mongoTemplate;

@@ -5,17 +5,17 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.adminService.sys.service.SysUserService;
 import com.example.adminService.utils.AddressUtils;
+import com.example.adminService.utils.JwtHelper;
 import com.example.adminService.utils.RedisCache;
 import com.example.adminService.entity.Form;
 import com.example.adminService.entity.FormItem;
 import com.example.adminService.entity.QueryVo.FormQuery;
-import com.example.adminService.entity.User;
+
 import com.example.adminService.entity.Vo.FormVo;
-import com.example.adminService.acl.security.TokenManager;
 import com.example.adminService.service.FormItemService;
 import com.example.adminService.service.FormService;
-import com.example.adminService.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -48,10 +48,10 @@ public class FormController {
     private FormItemService formItemService;
 
     @Autowired
-    private UserService userService;
+    private SysUserService userService;
 
     @Autowired
-    private TokenManager tokenManager;
+    private JwtHelper tokenManager;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -123,13 +123,10 @@ public class FormController {
     @ApiOperation(value = "添加表单")
     public Result addForm(@RequestBody FormVo formvo, HttpServletRequest request){
         String jwtToken = request.getHeader("token");
-        String username = tokenManager.getUserFromToken(jwtToken);
-        QueryWrapper<User> formQueryWrapper=new QueryWrapper<>();
-        formQueryWrapper.eq("username",username);
-        User one = userService.getOne(formQueryWrapper);
+        String userId = tokenManager.getUserIdByToken(jwtToken);
         Form form = new Form();
         form.setName(formvo.getTitle());
-        form.setUserId(one.getId());
+        form.setUserId(userId);
         if(!StringUtils.isEmpty(formvo.getDescription())){
             form.setDescription(formvo.getDescription());
         }
