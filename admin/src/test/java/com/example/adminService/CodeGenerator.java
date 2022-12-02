@@ -46,7 +46,7 @@ public class CodeGenerator {
 
         // 3、数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/questionnaire");
+        dsc.setUrl("jdbc:mysql://localhost:3306/questionnaire_sql");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("root1234");
@@ -55,8 +55,8 @@ public class CodeGenerator {
 
         // 4、包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.echoes");
-        pc.setModuleName("system"); //模块名 //后面会生成 com.example.eduService
+        pc.setParent("com.example");
+        pc.setModuleName("adminService"); //模块名 //后面会生成 com.example.eduService
         pc.setController("controller");
         pc.setEntity("entity");
         pc.setService("service");
@@ -66,7 +66,7 @@ public class CodeGenerator {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
         /**表的名称**/
-        strategy.setInclude("test");
+        strategy.setInclude("form_data");
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
 
