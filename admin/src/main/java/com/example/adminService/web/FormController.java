@@ -2,6 +2,7 @@ package com.example.adminService.web;
 
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -231,7 +232,9 @@ public class FormController {
     public Result viewCount(HttpServletRequest request,@RequestBody FormVo formvo){
         String submitID = "";
         String ipAddr = HttpUtils.getIpAddr(request);
-        String submitAddress =  AddressUtils.getRealAddressByIP(ipAddr);
+        String submitAddress = AddressUtils.getRealAddressByIP(ipAddr);
+        String ua = formvo.getUa()+ipAddr;
+        String s = UUID.nameUUIDFromBytes((ua).getBytes()).toString();
         /**判断有无工号**/
         if(StringUtils.isEmpty(formvo.getJobNo())){
             /**首先检测该访问者今天有没有访问过**/

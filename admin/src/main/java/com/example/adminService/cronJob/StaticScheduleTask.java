@@ -20,8 +20,8 @@ import java.util.List;
  * @description: TODO
  * @date 2022/11/18 10:08 AM
  */
-@Configuration
-@EnableScheduling
+//@Configuration
+//@EnableScheduling
 public class StaticScheduleTask {
 
     @Autowired
@@ -33,20 +33,20 @@ public class StaticScheduleTask {
     @Autowired
     ViewCountService viewCountService;
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    private void countViewEveryDay(){
-        QueryWrapper<Form> queryWrapper =new QueryWrapper<>();
-        List<Form> list = formService.list(queryWrapper);
-        for (Form form: list) {
-            Integer viewCache = redisCache.getCacheObject(form.getId());
-            /**如果今天有人访问 数据库插入一条数据**/
-            if(viewCache != null){
-                ViewCount viewCountEntity =new ViewCount();
-                viewCountEntity.setCount(viewCache.longValue());
-                viewCountEntity.setFormId(form.getId());
-                viewCountEntity.setCreateTime(new Date());
-                viewCountService.save(viewCountEntity);
-            }
-        }
-    }
+//    @Scheduled(cron = "0 0 0 * * ?")
+//    private void countViewEveryDay(){
+//        QueryWrapper<Form> queryWrapper =new QueryWrapper<>();
+//        List<Form> list = formService.list(queryWrapper);
+//        for (Form form: list) {
+//            Integer viewCache = redisCache.getCacheObject(form.getId());
+//            /**如果今天有人访问 数据库插入一条数据**/
+//            if(viewCache != null){
+//                ViewCount viewCountEntity =new ViewCount();
+//                viewCountEntity.setCount(viewCache.longValue());
+//                viewCountEntity.setFormId(form.getId());
+//                viewCountEntity.setCreateTime(new Date());
+//                viewCountService.save(viewCountEntity);
+//            }
+//        }
+//    }
 }

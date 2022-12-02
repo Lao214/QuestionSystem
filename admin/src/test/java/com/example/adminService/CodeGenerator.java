@@ -1,7 +1,7 @@
-package mp;
+package com.example.adminService;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -9,14 +9,9 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.example.adminService.entity.User;
-import com.example.adminService.service.UserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
-import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,30 +22,6 @@ import java.util.Date;
  * @since 2018/12/13
  */
 public class CodeGenerator {
-
-
-
-
-
-    @Test
-    public void testDateCompare() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = sdf.parse("2019-12-31");
-        Date date2 = sdf.parse("2019-01-31");
-
-        System.out.println("date1 : " + date1);
-        System.out.println("date2 : " + date2);
-
-        if (date1.compareTo(date2) > 0) {
-            System.out.println("Date1 时间在 Date2 之后");
-        } else if (date1.compareTo(date2) < 0) {
-            System.out.println("Date1 时间在 Date2 之前");
-        } else if (date1.compareTo(date2) == 0) {
-            System.out.println("Date1 时间与 Date2 相等");
-        } else {
-            System.out.println("程序怎么会运行到这里?正常应该不会");
-        }
-    }
 
 
     @Test
@@ -84,8 +55,8 @@ public class CodeGenerator {
 
         // 4、包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.example");
-        pc.setModuleName("adminService"); //模块名 //后面会生成 com.example.eduService
+        pc.setParent("com.echoes");
+        pc.setModuleName("system"); //模块名 //后面会生成 com.example.eduService
         pc.setController("controller");
         pc.setEntity("entity");
         pc.setService("service");
@@ -95,7 +66,7 @@ public class CodeGenerator {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
         /**表的名称**/
-        strategy.setInclude("view_count");
+        strategy.setInclude("test");
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
         strategy.setTablePrefix(pc.getModuleName() + "_"); //生成实体时去掉表前缀
 
@@ -111,8 +82,4 @@ public class CodeGenerator {
         // 6、执行
         mpg.execute();
     }
-
-
-
-
 }
