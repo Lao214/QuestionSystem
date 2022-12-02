@@ -38,5 +38,8 @@ public class FormItem implements Serializable {
     @ApiModelProperty(value = "问卷名称")
     private String name;
 
+    @ApiModelProperty(value = "问卷描述")
+    private String description;
+
 
 }

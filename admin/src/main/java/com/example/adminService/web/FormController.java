@@ -128,9 +128,6 @@ public class FormController {
         Form form = new Form();
         form.setName(formvo.getTitle());
         form.setUserId(userId);
-        if(!StringUtils.isEmpty(formvo.getDescription())){
-            form.setDescription(formvo.getDescription());
-        }
         form.setCreateTime(new Date());
         form.setUpdateTime(new Date());
         boolean save =  formService.save(form);
@@ -139,6 +136,9 @@ public class FormController {
             formItem.setName(formvo.getTitle());
             formItem.setFormId(form.getId());
             formItem.setItem(formvo.getValues());
+            if(!StringUtils.isEmpty(formvo.getDescription())){
+                formItem.setDescription(formvo.getDescription());
+            }
             boolean saveOK = formItemService.save(formItem);
             if(saveOK){
                 return Result.success().data("formItem",formItem);
@@ -163,15 +163,15 @@ public class FormController {
             Form form =new Form();
             form.setId(formvo.getId());
             form.setName(formvo.getTitle());
-            if(!StringUtils.isEmpty(formvo.getDescription())){
-                form.setDescription(formvo.getDescription());
-            }
             boolean save = formService.updateById(form);
             if(save){
                 FormItem formItem = new FormItem();
                 formItem.setName(formvo.getTitle());
                 formItem.setItem(formvo.getValues());
                 formItem.setFormId(formvo.getId());
+                if(!StringUtils.isEmpty(formvo.getDescription())){
+                    formItem.setDescription(formvo.getDescription());
+                }
                 boolean saveOK = formItemService.updateByFormId(formItem);
                 if(saveOK){
                     Object o = redisTemplate.opsForValue().get(formvo.getId() + "item");
@@ -230,11 +230,8 @@ public class FormController {
 
     @PostMapping("viewCount")
     public Result viewCount(HttpServletRequest request,@RequestBody FormVo formvo){
-        String submitID = "";
         String ipAddr = HttpUtils.getIpAddr(request);
         String submitAddress = AddressUtils.getRealAddressByIP(ipAddr);
-        String ua = formvo.getUa()+ipAddr;
-        String s = UUID.nameUUIDFromBytes((ua).getBytes()).toString();
         /**判断有无工号**/
         if(StringUtils.isEmpty(formvo.getJobNo())){
             /**首先检测该访问者今天有没有访问过**/
@@ -247,11 +244,6 @@ public class FormController {
                 Integer viewCache = redisCache.getCacheObject(formvo.getId());
                 if(viewCache == null){
                     redisCache.setCacheObject(formvo.getId(),1);
-//                    /**数据库插入一条数据**/
-//                    ViewCountEntity viewCountEntity =new ViewCountEntity();
-//                    viewCountEntity.setCount(1l);
-//                    viewCountEntity.setFormKey(formKey);
-//                    viewCountService.save(viewCountEntity);
                     return Result.success().data("submitID",visitorStr+dateStr).data("submitAddress",submitAddress);
                 }else {
                     redisCache.setCacheObject(formvo.getId(),viewCache+1);

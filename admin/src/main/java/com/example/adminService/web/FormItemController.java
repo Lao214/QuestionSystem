@@ -10,6 +10,7 @@ import com.example.adminService.service.FormService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import utils.Result;
@@ -80,6 +81,9 @@ public class FormItemController {
             FormItem formItem =new FormItem();
             formItem.setFormId(formvo.getId());
             formItem.setItem(formvo.getValues());
+            if(!StringUtils.isEmpty(formvo.getDescription())){
+                formItem.setDescription(formvo.getDescription());
+            }
             boolean updateOK = formItemService.updateByFormId(formItem);
             if(updateOK){
                 return  Result.success();

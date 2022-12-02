@@ -73,7 +73,6 @@ public class formDataController {
             Map<String,String> dataMap = JSONObject.parseObject(formvo.getData(), Map.class);
             dataMap.put("createBy", createBy);
             dataMap.put("submitAddress", submitAddress);
-            dataMap.put("submitID", ipAddr);
             String resultStr = "";
              if(form.getType()==1){
                  String formula = form.getEvaluateLogic();
