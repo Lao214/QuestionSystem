@@ -53,17 +53,6 @@ public class formDataController {
     @PostMapping("postFormData")
     @ApiOperation(value = "提交数据")
     public Result postFormData(@RequestBody FormVo formvo, HttpServletRequest request){
-        String ipAddr = HttpUtils.getIpAddr(request);
-        String submitAddress = AddressUtils.getRealAddressByIP(ipAddr);
-        String dateStr = DateUtil.formatDate(new Date()).replaceAll("-", "");
-        String createBy = "";
-        if(StringUtils.isEmpty(formvo.getJobNo())){
-            String ua = formvo.getUa()+ipAddr;
-            String uaId = UUID.nameUUIDFromBytes((ua).getBytes()).toString();
-            createBy = uaId + "-" + dateStr;
-        } else {
-            createBy = formvo.getJobNo() + dateStr;
-        }
         Form form = formService.getById(formvo.getId());
         formvo.setData(formvo.getData().replaceAll("\\.","_"));
         if(form.getStatus()==0){
@@ -71,8 +60,6 @@ public class formDataController {
         }
         if(form.getStatus()==1){
             Map<String,String> dataMap = JSONObject.parseObject(formvo.getData(), Map.class);
-            dataMap.put("createBy", createBy);
-            dataMap.put("submitAddress", submitAddress);
             String resultStr = "";
              if(form.getType()==1){
                  String formula = form.getEvaluateLogic();
